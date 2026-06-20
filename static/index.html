@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>విద్యా విజయం - Fishtopia Fishing Adventure</title>
+    <!-- Google Fonts for Playful Typography and Telugu Script support -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Outfit:wght@400;600;800&family=Noto+Sans+Telugu:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+    <div id="game-viewport" class="game-layout">
+        
+        <!-- TOP HUD STATUS BAR -->
+        <header class="hud-bar">
+            <div class="hud-item brand">
+                <button id="btn-back-menu" class="home-icon-btn hidden" aria-label="Go Home">🏠</button>
+                <div class="logo-group">
+                    <span class="logo-main">విద్యా విజయం</span>
+                    <span class="logo-sub">Fishtopia</span>
+                </div>
+            </div>
+            <div class="hud-item-group">
+                <button id="btn-toggle-mute" class="hud-audio-btn">🔊 Mute Voice</button>
+                <div class="hud-item lvl">🏆 <span class="label">మెట్టు (Level):</span> <strong id="global-level">1</strong></div>
+                <div class="hud-item score">💰 <span class="label">స్కోరు (Score):</span> <strong id="global-score">0</strong></div>
+                <div class="hud-item bait">🐛 <span class="label">ఎర (Bait):</span> <strong><span id="global-bait">0</span>/<span id="max-bait-display">3</span></strong></div>
+                <div class="hud-item inventory">🎒 <span class="label">సంచి (Inventory):</span> <strong id="global-inventory-count">0/5</strong></div>
+            </div>
+        </header>
+
+        <!-- MAIN SCREENS CONTAINER -->
+        <main class="game-content-area">
+            
+            <!-- DUAL PANEL SYSTEM -->
+            <!-- 1. STUDY STATION / QUIZ PANEL -->
+            <section id="panel-quiz" class="game-panel active-panel">
+                
+                <!-- A. MODULE SELECTION MENU VIEW (shown when no module is active) -->
+                <div id="quiz-menu-view" class="menu-view">
+                    <div class="welcome-card">
+                        <h2>హలో బుజ్జి స్నేహితుడా! తెలుగు నేర్చుకుందాం! 🎉</h2>
+                        <p class="subtitle">Answering questions earns you Bait to catch exotic fish in the pond!</p>
+                    </div>
+                    
+                    <div class="module-section">
+                        <h3>సాహస వలయాలు <span class="english-sub">Choose a Study Module!</span></h3>
+                        <div class="modules-grid">
+                            <div class="module-card" id="btn-alphabet">
+                                <div class="module-icon">🎈</div>
+                                <h4>అచ్చులు & హల్లులు</h4>
+                                <span class="english-sub">Vowels & Consonants</span>
+                            </div>
+                            <div class="module-card" id="btn-spelling">
+                                <div class="module-icon">🧸</div>
+                                <h4>పదాల అమరిక</h4>
+                                <span class="english-sub">Spelling Words</span>
+                            </div>
+                            <div class="module-card" id="btn-vocabulary">
+                                <div class="module-icon">🦁</div>
+                                <h4>పదాల అర్ధాలు</h4>
+                                <span class="english-sub">Vocabulary Definitions</span>
+                            </div>
+                            <div class="module-card" id="btn-grammar">
+                                <div class="module-icon">🧩</div>
+                                <h4>వాక్య నిర్మాణం</h4>
+                                <span class="english-sub">Sentence Formation</span>
+                            </div>
+                            <div class="module-card" id="btn-comprehension">
+                                <div class="module-icon">🏰</div>
+                                <h4>పఠన అవగాహన</h4>
+                                <span class="english-sub">Reading Comprehension</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TEACHER/PARENT SECTION -->
+                    <div class="syllabus-upload-card">
+                        <h4>పాఠాల పుస్తకం జోడించండి (టీచర్స్/పేరెంట్స్ కోసం) 📚</h4>
+                        <p class="desc">Upload a Balabadi syllabus PDF to update local vocabulary databases!</p>
+                        <form id="upload-form" class="upload-inline-form">
+                            <label for="pdf-file" class="file-label">📁 Select PDF</label>
+                            <input id="pdf-file" type="file" accept=".pdf" style="display:none;" />
+                            <span id="file-name" class="file-name">No file chosen</span>
+                            <button type="submit" id="upload-btn" class="btn upload-btn">Upload</button>
+                        </form>
+                        <div id="upload-status" class="upload-status"></div>
+                    </div>
+                </div>
+
+                <!-- B. QUIZ QUESTION VIEW (shown when module is active) -->
+                <div id="quiz-question-view" class="question-view hidden">
+                    <div class="card-container" id="quiz-card">
+                        <div class="question-header">
+                            <span class="module-badge" id="active-module-badge">అచ్చులు & హల్లులు</span>
+                            <button id="tts-btn" class="tts-btn">🔊 పలకండి (Listen)</button>
+                        </div>
+                        
+                        <div class="timer-wrapper">
+                            <div id="progress-bar" class="bar-fill" style="width: 100%;"></div>
+                        </div>
+                        
+                        <!-- Story Block for Reading Comprehension -->
+                        <div id="story-block" class="story-block hidden">
+                            <p id="story-text" class="story-text"></p>
+                            <div class="story-translation-hints">
+                                <span id="story-roman" class="story-hint-roman"></span>
+                                <span id="story-meaning" class="story-hint-meaning"></span>
+                            </div>
+                        </div>
+
+                        <div class="question-body">
+                            <h2 id="question-text" class="telugu-primary">ప్రశ్న సిద్ధమౌతోంది...</h2>
+                            <span id="question-subtitle" class="english-sub">Your game is loading...</span>
+                            <div id="question-translation-hints" class="question-hints">
+                                <span id="hint-transliteration" class="hint-pill roman"></span>
+                                <span id="hint-meaning" class="hint-pill meaning"></span>
+                            </div>
+                        </div>
+
+                        <!-- Options / Interaction layouts dynamically rendered -->
+                        <div id="options-grid" class="options-layout">
+                            <!-- Options list here -->
+                        </div>
+
+                        <div class="input-fallback-zone">
+                            <button id="btn-mic" class="mic-btn">🎙️ మాట్లాడండి (Speak)</button>
+                            <button id="btn-keyboard-toggle" class="keyboard-toggle">⌨️ Type Instead</button>
+                        </div>
+
+                        <!-- Telugu Virtual Keyboard panel -->
+                        <div id="virtual-keyboard" class="virtual-keyboard-panel hidden-element">
+                            <div class="keyboard-input-wrapper">
+                                <input type="text" id="keyboard-input-display" readonly placeholder="ఇక్కడ అక్షరాలు కనిపిస్తాయి..." />
+                                <button id="clear-keyboard-input" class="btn clear-btn">తుడిచివేయి</button>
+                                <button id="submit-keyboard-input" class="btn check-btn">సరిచూడు</button>
+                            </div>
+                            <div class="keyboard-tabs">
+                                <button class="tab-btn active" data-group="vowels">అచ్చులు</button>
+                                <button class="tab-btn" data-group="consonants">హల్లులు</button>
+                            </div>
+                            <div class="keyboard-keys-container" id="keyboard-keys"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation between hubs -->
+                <button id="btn-go-fishing" class="dock-nav-btn locked" disabled>🎣 Go to Fishing Pond (Needs 3 Bait)</button>
+            </section>
+
+            <!-- 2. FISHING DOCK PANEL -->
+            <section id="panel-fishing" class="game-panel hidden-panel">
+                <div class="dock-layout">
+                    
+                    <div class="dock-actions">
+                        <button id="btn-sell-fish" class="action-btn sell-btn">💰 Sell All Fish</button>
+                        <button id="btn-go-study" class="action-btn return-btn">📚 Back to Study Station</button>
+                    </div>
+
+                    <!-- Water Pond Canvas -->
+                    <div id="fishing-pond" class="pond-environment">
+                        <div class="water-overlay"></div>
+                        <div class="boat-avatar">🛶</div>
+                        <div id="fishing-hook" class="hidden-hook">🎣</div>
+                        <div class="water-ripple"></div>
+                        <div class="instruction-banner">Tap anywhere on the water to cast your line!</div>
+                        
+                        <!-- Catch Alert Modal -->
+                        <div id="catch-modal" class="catch-alert-window hidden-element">
+                            <div class="modal-content-wrapper">
+                                <span id="caught-fish-emoji" class="huge-emoji">🐠</span>
+                                <h3 id="caught-fish-name" class="telugu-primary">బంగారు చేప!</h3>
+                                <p id="caught-fish-rarity" class="rarity-tag common">Common</p>
+                                <p class="points-worth">Worth: <span id="caught-fish-value">25</span> points</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Backpack and Inventory List -->
+                    <div class="backpack-display">
+                        <h3>💼 మీ చేపల సంచి (Your Fish Backpack):</h3>
+                        <div id="inventory-list" class="inventory-grid">Empty</div>
+                    </div>
+
+                    <!-- Upgrades Shop Section -->
+                    <div class="upgrades-shop">
+                        <h3>🛒 ఫిష్-టాపియా దుకాణం (Fishtopia Upgrades Shop)</h3>
+                        <div class="upgrades-grid">
+                            <div class="upgrade-card" id="card-upgrade-rod">
+                                <span class="upgrade-icon">🎣</span>
+                                <h4>మంచి గాలం (Better Rod)</h4>
+                                <p class="upgrade-desc">Catches rarer fish with higher points multipliers!</p>
+                                <span class="upgrade-level">Lvl: <strong id="rod-level-display">1/4</strong></span>
+                                <button id="btn-upgrade-rod" class="btn buy-btn">Buy for <span id="rod-cost-display">100</span> pts</button>
+                            </div>
+                            
+                            <div class="shop-upgrade-card" id="card-upgrade-backpack">
+                                <div class="shop-icon">🎒</div>
+                                <h3 class="shop-item-title">పెద్ద సంచి (Super Backpack)</h3>
+                                <p class="shop-item-desc">Increases storage capacity so you can catch more fish before selling!</p>
+                                <span class="level-indicator">Lvl: <strong id="backpack-level-display">1/4</strong></span>
+                                <button id="btn-upgrade-backpack" class="shop-purchase-btn btn buy-btn">Buy for <span id="backpack-cost-display">75</span> pts</button>
+                            </div>
+                            
+                            <div class="upgrade-card" id="card-upgrade-bait-bucket">
+                                <span class="upgrade-icon">🪣</span>
+                                <h4>ఎర డబ్బా (Bait Bucket)</h4>
+                                <p class="upgrade-desc">Increases the maximum bait you can carry at once!</p>
+                                <span class="upgrade-level">Lvl: <strong id="bait-bucket-level-display">1/4</strong></span>
+                                <button id="btn-upgrade-bait-bucket" class="btn buy-btn">Buy for <span id="bait-bucket-cost-display">50</span> pts</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+
+        <!-- CELEBRATION FEEDBACK OVERLAYS -->
+        <div id="correct-overlay" class="feedback-overlay hidden">
+            <div class="feedback-card pop-in">
+                <span class="feedback-emoji">🎉</span>
+                <h2 id="feedback-success-title">భలే చేసావ్! నువ్వు సూపర్!</h2>
+                <p class="english-sub" id="feedback-success-sub">Correct answer, buddy!</p>
+                <div class="bait-earned-banner">+1 Bait 🐛</div>
+                <button id="btn-next-level" class="btn continue-btn">తరువాతి ఆటకి వెళ్దాం (Next!) ➡️</button>
+            </div>
+        </div>
+
+        <div id="wrong-overlay" class="feedback-overlay wrong hidden">
+            <div class="feedback-card shake">
+                <span class="feedback-emoji">💪</span>
+                <h2>మళ్ళీ ప్రయత్నించు, నువ్వు చేయగలవు!</h2>
+                <p class="english-sub">You can do it! Try again!</p>
+                <div class="correct-answer-reveal">
+                    <span>సరైన జవాబు (The answer is):</span>
+                    <strong id="correct-answer-text">...</strong>
+                </div>
+                <button id="btn-retry" class="btn retry-btn">తరువాతి ఆటకి వెళ్దాం (Next!) ➡️</button>
+            </div>
+        </div>
+
+        <div id="levelup-overlay" class="feedback-overlay levelup hidden">
+            <div class="feedback-card pop-in">
+                <span class="feedback-emoji">👑</span>
+                <h2>మెట్టు పెరిగింది! నువ్వు గెలిచావు!</h2>
+                <p class="english-sub">Superb! You reached a new level!</p>
+                <div class="level-badge" id="levelup-badge">2</div>
+                <p class="level-desc english-sub">You are ready for a new challenge!</p>
+                <button id="btn-close-levelup" class="btn levelup-close-btn">కొత్త సాహసం చేద్దాం (New Adventure!) 🚀</button>
+            </div>
+        </div>
+
+        <div id="streak-bonus-overlay" class="feedback-overlay hidden">
+            <div class="feedback-card pop-in">
+                <span class="feedback-emoji">🔥</span>
+                <h2>STREAK COMBO! BONUS BAIT UNLOCKED!</h2>
+                <div class="bait-earned-banner">+2 Bait 🐛</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script imports -->
+    <script src="keyboard.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

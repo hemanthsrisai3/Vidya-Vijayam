@@ -1,0 +1,16 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Databases & local data
+curriculum_db.json
+temp/
+
+# IDE / System
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
